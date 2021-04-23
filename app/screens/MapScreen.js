@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, View, Text, Dimensions, StatusBar } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
-import Location from "expo-location";
-import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+//import * as Permissions from "expo-permissions";
 import { useSelector } from "react-redux";
 import IconButton from "../components/IconButton";
 import MarkerView from "../components/MarkerView";
@@ -14,15 +14,23 @@ export default function MapScreen(props) {
   const spots = useSelector((state) => state.spotsReducer.spots);
   const [location, setLocation] = useState(null);
   const [locRegion, setLocRegion] = useState(null);
-  const [permission, askPermission, getPermission] = Permissions.usePermissions(
-    Permissions.LOCATION
-  );
+  const [permission, setPermission] = useState(false);
+
   const [newMarker, setNewMarker] = useState(null);
   const mapRef = useRef();
 
+  async function askPermissionAsync() {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      setPermission(true);
+    } else {
+      alert("Location permission not granted");
+    }
+  }
+
   useEffect(() => {
-    if (!permission || permission.status !== "granted") {
-      askPermission();
+    if (!permission) {
+      askPermissionAsync();
     }
   }, []);
 
@@ -69,8 +77,8 @@ export default function MapScreen(props) {
         /> */}
         <IconButton
           onPress={() => {
-            askPermission();
-            if (location !== undefined && location !== null) {
+            askPermissionAsync();
+            if (location !== undefined && location !== null && permission) {
               mapRef.current.animateToRegion(locRegion, 1000);
             }
           }}
@@ -94,7 +102,7 @@ export default function MapScreen(props) {
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        showsUserLocation={permission && permission.status === "granted"}
+        showsUserLocation={permission}
         showsMyLocationButton={true}
         initialRegion={{
           latitude: 48.71946342885445,

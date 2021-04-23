@@ -41,7 +41,7 @@ export default function SpotListScreen(props) {
 
   return (
     <View style={styles.container}>
-      {/* <StatusBar /> */}
+      <StatusBar />
       <View style={styles.title}>
         <Text style={[styles.txtTitle, { color: colors.primary }]}>Spots</Text>
       </View>

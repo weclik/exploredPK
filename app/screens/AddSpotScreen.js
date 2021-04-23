@@ -13,7 +13,7 @@ import "firebase/firestore";
 import "firebase/storage";
 import { useTheme } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
+//import * as Permissions from "expo-permissions";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addSpot } from "../redux/actions/actions";
@@ -24,10 +24,10 @@ const AddSpotScreen = (props) => {
   const { colors } = useTheme();
 
   async function getImageAsync() {
-    const { status, permissions } = await Permissions.askAsync(
-      Permissions.MEDIA_LIBRARY,
-      Permissions.CAMERA
-    );
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+    }
     if (status === "granted") {
       pickImage();
     } else {

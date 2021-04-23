@@ -14,7 +14,7 @@ import "firebase/storage";
 import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
+//import * as Permissions from "expo-permissions";
 
 import BasicButton from "../components/BasicButton";
 
@@ -22,10 +22,10 @@ const EditChallengeScreen = (props) => {
   const { colors } = useTheme();
 
   async function getImageAsync() {
-    const { status, permissions } = await Permissions.askAsync(
-      Permissions.MEDIA_LIBRARY,
-      Permissions.CAMERA
-    );
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+    }
     if (status === "granted") {
       pickImage();
     } else {

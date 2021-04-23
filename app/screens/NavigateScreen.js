@@ -19,9 +19,7 @@ export default function NavigateScreen(props) {
   //const GOOGLE_MAPS_APIKEY = "AIzaSyCTouMeor8kOIr-D1BFAG_9GzyHVxtbWPY";
 
   async function askPermissionAsync() {
-    const { status, permissions } = await Permissions.askAsync(
-      Permissions.LOCATION
-    );
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       setPermission(true);
     } else {
