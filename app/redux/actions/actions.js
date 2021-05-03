@@ -1,6 +1,7 @@
 import {
   USER_STATE_CHANGED,
   USERSPOTS_STATE_CHANGED,
+  USER_CHALLENGES_DONE_CHANGED,
   SPOTS_STATE_CHANGED,
   CHALLENGES_STATE_CHANGED,
   CLEAR_DATA,
@@ -74,6 +75,33 @@ export const setUserSpots = (spots) => {
             });
           });
           dispatch({ type: USERSPOTS_STATE_CHANGED, userSpots: spts });
+        },
+        (err) => {
+          console.log(err.message);
+        }
+      );
+  };
+};
+
+export const setUserChallengesDone = () => {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("challengesDone")
+      .onSnapshot(
+        (querySnapshot) => {
+          const chlngs = [];
+
+          querySnapshot.forEach((documentSnapshot) => {
+            chlngs.push(documentSnapshot.id);
+          });
+
+          dispatch({
+            type: USER_CHALLENGES_DONE_CHANGED,
+            userChallengesDone: chlngs,
+          });
         },
         (err) => {
           console.log(err.message);

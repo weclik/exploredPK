@@ -8,6 +8,7 @@ import {
   setSpots,
   setUser,
   setUserSpots,
+  setUserChallengesDone,
   clearData,
 } from "../redux/actions/actions";
 import * as firebase from "firebase";
@@ -26,9 +27,10 @@ export default function MainTabNav() {
 
   useEffect(() => {
     dispatch(clearData());
-    dispatch(setSpots());
     dispatch(setUser());
+    dispatch(setSpots());
     dispatch(setUserSpots());
+    dispatch(setUserChallengesDone());
 
     return () => {
       console.log("Tab unmount");

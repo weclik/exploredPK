@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
+import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -19,6 +20,15 @@ const ChallengeScreen = (props) => {
   const { challenge } = props.route.params;
   const { spot } = props.route.params;
   const { colors } = useTheme();
+
+  const chlngs = useSelector((state) => state.userReducer.userChallengesDone);
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    if (chlngs.indexOf(challenge.key) > -1) {
+      setIsDone(true);
+    }
+  }, [challenge]);
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
@@ -90,6 +100,7 @@ const ChallengeScreen = (props) => {
         <Text style={[styles.titleStyle, { color: colors.title }]}>
           {challenge?.name}
         </Text>
+        {isDone && <Text style={{ color: "green", fontSize: 20 }}>DONE</Text>}
       </View>
       <Image
         style={{

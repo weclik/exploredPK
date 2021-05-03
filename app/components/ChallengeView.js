@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,7 +7,14 @@ import {
   Pressable,
   Dimensions,
   Alert,
+  Switch,
 } from "react-native";
+
+import * as firebase from "firebase";
+import "firebase/firestore";
+
+import { useDispatch, useSelector } from "react-redux";
+import { setUserChallengesDone } from "../redux/actions/actions";
 
 import { useTheme } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
@@ -22,23 +29,76 @@ function ChallengeView(props) {
   const { challenge } = props;
   const { spot } = props;
 
+  const dispatch = useDispatch();
+
+  const chlngs = useSelector((state) => state.userReducer.userChallengesDone);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState);
+    if (!isEnabled) {
+      challengeDone();
+    } else {
+      challengeNotDone();
+    }
+  };
+
+  function challengeDone() {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("challengesDone")
+      .doc(challenge.key)
+      .set({})
+      .then(() => {})
+      .catch((error) => {
+        console.log(error.message);
+        alert(error.message);
+      });
+  }
+
+  function challengeNotDone() {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("challengesDone")
+      .doc(challenge.key)
+      .delete()
+      .then(() => {})
+      .catch((error) => {
+        console.log(error.message);
+        alert(error.message);
+      });
+  }
+
+  useEffect(() => {
+    if (chlngs.indexOf(challenge.key) > -1) {
+      setIsEnabled(true);
+    }
+  }, [chlngs, challenge]);
+
   //const { t, i18n } = useTranslation();
 
   return (
     <Pressable
       onPress={props.onPress}
-      style={[styles.container, { backgroundColor: colors.spotBg }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.spotBg,
+        },
+      ]}
     >
       <Image
         style={{
           flex: 1,
           height: Dimensions.get("window").height / 3,
           width: "100%",
-          //alignSelf: "center",
           borderRadius: 5,
-          //marginBottom: 20,
-          borderWidth: 1,
-          borderColor: "grey",
+          borderWidth: isEnabled ? 3 : 1,
+          borderColor: isEnabled ? "green" : "lightgrey",
           resizeMode: "cover",
         }}
         source={{
@@ -56,6 +116,13 @@ function ChallengeView(props) {
           </Text>
         </View>
       </View>
+      <Switch
+        style={styles.switch}
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={isEnabled ? "green" : "#f4f3f4"}
+        onValueChange={toggleSwitch}
+        value={isEnabled}
+      />
     </Pressable>
   );
 }
@@ -76,6 +143,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     left: 5,
+  },
+  switch: {
+    position: "absolute",
+    top: 15,
+    right: 5,
+    elevation: 1,
   },
   titleStyle: {
     fontSize: 15,

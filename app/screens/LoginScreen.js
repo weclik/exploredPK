@@ -11,8 +11,6 @@ import * as firebase from "firebase";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { setUser } from "../redux/actions/actions";
 
 import BasicButton from "../components/BasicButton";
 
