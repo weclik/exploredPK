@@ -84,7 +84,7 @@ const ChallengeScreen = (props) => {
         iconName={"close"}
         style={{ top: 15, right: 15, borderWidth: 0.5, borderColor: "grey" }}
         iconColor={colors.text}
-        showShadow={true}
+        showShadow={false}
       />
       <View style={styles.title}>
         <Text style={[styles.titleStyle, { color: colors.title }]}>

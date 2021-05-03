@@ -11,7 +11,7 @@ import SpotView from "../components/SpotView";
 import { useTheme } from "@react-navigation/native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setSpots, addSpot, deleteSpot } from "../redux/actions/actions";
+import { setSpots } from "../redux/actions/actions";
 
 export default function SpotListScreen(props) {
   const { colors } = useTheme();
@@ -22,7 +22,7 @@ export default function SpotListScreen(props) {
   // const saveSpots = (spots) => dispatch(setSpots(spots));
 
   const spots = useSelector((state) => state.spotsReducer.spots);
-  const username = useSelector((state) => state.userReducer.user);
+  const username = useSelector((state) => state.userReducer.user.username);
 
   useEffect(() => {
     setIsLoading(false);
@@ -63,7 +63,6 @@ export default function SpotListScreen(props) {
             }}
             createdBy={item.createdBy}
             objectId={item.key}
-            user={username}
           />
         )}
       />

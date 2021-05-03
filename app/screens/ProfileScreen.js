@@ -1,82 +1,108 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-//import Parse from "parse/react-native";
-import * as firebase from "firebase";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
 
-import BasicButton from "../components/BasicButton";
-import { useSelector, useDispatch } from "react-redux";
-import { setUser } from "../redux/actions/actions";
+import * as firebase from "firebase";
+import { useTheme } from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
+import IconButton from "../components/IconButton";
+
+import SpotView from "../components/SpotView";
+import { useSelector } from "react-redux";
+
+const Tab = createMaterialTopTabNavigator();
 
 export default function ProfileScreen(props) {
-  const [loggedOut, setLoggedOut] = useState(false);
+  const { colors } = useTheme();
 
-  const username = useSelector((state) => state.userReducer.user);
-  const spots = useSelector((state) => state.spotsReducer.spots);
-  const dispatch = useDispatch();
-
-  const unsetUser = (user) => dispatch(setUser(user));
+  const username = useSelector((state) => state.userReducer.user.username);
+  const userSpots = useSelector((state) => state.userReducer.userSpots);
 
   function onLogOut() {
-    // try {
-    //   Parse.User.logOut()
-    //     .then(() => {
-    //       console.log("Logged out.");
-    //       setLoggedOut(true);
-    //       unsetUser(null);
-
-    //       props.navigation.replace("Login");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error.message);
-    //       alert(error.message);
-    //     });
-    // } catch (error) {
-    //   console.log(error.message);
-    //   alert(error.message);
-    // }
-
-    //props.navigation.replace("Login");
-    try {
-      AsyncStorage.setItem("username", "").then();
-    } catch (error) {
-      console.log(error.message);
-      alert(error.message);
-    }
-    firebase.auth().signOut();
+    Alert.alert(
+      //t("Log Out"),
+      "Log Out",
+      //t("Are you sure you want to log out?"),
+      "Are you sure you want to log out?",
+      [
+        {
+          //text: t("Cancel"),
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          //text: t("Yes"),
+          text: "Yes",
+          onPress: () => {
+            console.log("yes Pressed");
+            firebase.auth().signOut();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={{ alignSelf: "center", fontSize: 30 }}>{username}</Text>
-      <BasicButton
-        title="Log out"
+      <Text style={[styles.name, { color: colors.text }]}>{username}</Text>
+      <IconButton
         onPress={() => {
-          Alert.alert(
-            //t("Log Out"),
-            "Log Out",
-            //t("Are you sure you want to log out?"),
-            "Are you sure you want to log out?",
-            [
-              {
-                //text: t("Cancel"),
-                text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
-                style: "cancel",
-              },
-              {
-                //text: t("Yes"),
-                text: "Yes",
-                onPress: () => {
-                  console.log("yes Pressed");
-                  onLogOut();
-                },
-              },
-            ],
-            { cancelable: false }
-          );
+          onLogOut();
         }}
+        iconName={"logout"}
+        style={{ right: 20, top: 20 }}
+        iconColor={colors.text}
+        showShadow={false}
       />
+      <Tab.Navigator
+        tabBarOptions={{
+          showLabel: true,
+          labelStyle: {
+            fontSize: 14,
+          },
+        }}
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === "Info") {
+              iconName = focused ? "info-circle" : "info";
+            } else if (route.name === "Challenges") {
+              iconName = focused ? "trophy" : "trophy";
+            }
+            return <FontAwesome5 name={iconName} size={20} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="My Spots">
+          {() => (
+            <View style={styles.container}>
+              <FlatList
+                style={{ flex: 1 }}
+                data={userSpots}
+                keyExtractor={(item) => item.key}
+                renderItem={({ item }) => (
+                  <SpotView
+                    title={item.title}
+                    description={item.description}
+                    image={item.imageURL}
+                    onPress={() => {
+                      props.navigation.navigate("Spot", {
+                        spot: item,
+                      });
+                      console.log("Pressed");
+                    }}
+                    createdBy={item.createdBy}
+                    objectId={item.key}
+                  />
+                )}
+              />
+            </View>
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="My challenges">{() => <View></View>}</Tab.Screen>
+      </Tab.Navigator>
     </View>
   );
 }
@@ -86,4 +112,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  name: { alignSelf: "center", fontSize: 30, marginVertical: 15 },
 });

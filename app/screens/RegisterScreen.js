@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 
 import { useTheme } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { setUser } from "../redux/actions/actions";
+
+import firebase from 'firebase'
+import "firebase/firestore";
 
 import BasicButton from "../components/BasicButton";
 
@@ -11,45 +12,31 @@ export default function RegisterScreen(props) {
   const { colors } = useTheme();
 
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verPassword, setVerPassword] = useState("");
 
-  const dispatch = useDispatch();
-
-  const saveUser = (user) => dispatch(setUser(user));
-
-  function submitAndClear() {
-    setUsername("");
-    setPassword("");
-    setVerPassword("");
-  }
 
   function onSignUp() {
-    if (username === "" || password === "" || verPassword === "") {
+    if (username === "" || password === "" || verPassword === "" || email === "") {
       //alert(t("Fill the fields correctly."));
       alert("Fill the fields correctly.");
     } else {
       try {
-        Parse.User.logOut();
-        let user = new Parse.User();
-        user.set("username", username);
-        user.set("password", password);
-        const result = user
-          .signUp()
-          .then((user) => {
-            submitAndClear();
-            saveUser(user);
-
-            props.navigation.replace("MainTab");
-          })
-          .catch((error) => {
-            console.log(error.message);
-            if (error.code === 202) {
-              console.log("USERNAME TAKEN");
-              //alert(t("Username taken!"));
-              alert("Username taken.");
-            }
-          });
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((result) => {
+                firebase.firestore().collection("users")
+                    .doc(firebase.auth().currentUser.uid)
+                    .set({
+                        username,
+                        email
+                    })
+                console.log(result)
+            })
+            .catch((error) => {
+                console.log(error);
+                alert(error.message);
+            })
       } catch (error) {
         console.log(error.message);
         alert(error.message);
@@ -99,6 +86,23 @@ export default function RegisterScreen(props) {
               styles.txtInput,
             ]}
             autoCapitalize={"none"}
+            autoCorrect={false}
+            placeholder="Email"
+            placeholderTextColor={colors.placeholder}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            elevation={5}
+          />
+          <TextInput
+            style={[
+              {
+                borderColor: colors.border,
+                color: colors.primary,
+                backgroundColor: colors.bgInput,
+              },
+              styles.txtInput,
+            ]}
+            autoCapitalize={"none"}
             autoCompleteType={"password"}
             autoCorrect={false}
             textContentType={"password"}
@@ -134,7 +138,11 @@ export default function RegisterScreen(props) {
           <BasicButton
             title="Sign Up"
             onPress={() => {
-              onSignUp();
+              if (password === verPassword) {
+                onSignUp();
+              } else {
+                alert("Not matching passwords!");
+              }
             }}
           />
         </View>

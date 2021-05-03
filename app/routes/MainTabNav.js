@@ -4,7 +4,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useDispatch } from "react-redux";
-import { setSpots, setUser } from "../redux/actions/actions";
+import {
+  setSpots,
+  setUser,
+  setUserSpots,
+  clearData,
+} from "../redux/actions/actions";
 import * as firebase from "firebase";
 import "firebase/firestore";
 
@@ -18,49 +23,15 @@ const Tab = createBottomTabNavigator();
 
 export default function MainTabNav() {
   const dispatch = useDispatch();
-  const saveSpots = (spots) => dispatch(setSpots(spots));
-  const saveUser = (username) => dispatch(setUser(username));
-
-  const getUsername = async () => {
-    try {
-      const value = await AsyncStorage.getItem("username");
-      if (value !== null) {
-        // value previously stored
-        saveUser(value);
-      }
-    } catch (error) {
-      // error reading value
-      console.log(error.message);
-      alert(error.message);
-    }
-  };
 
   useEffect(() => {
-    getUsername();
+    dispatch(clearData());
+    dispatch(setSpots());
+    dispatch(setUser());
+    dispatch(setUserSpots());
 
-    const spotsSubscribe = firebase
-      .firestore()
-      .collection("spots")
-      .onSnapshot(
-        (querySnapshot) => {
-          const spts = [];
-
-          querySnapshot.forEach((documentSnapshot) => {
-            spts.push({
-              ...documentSnapshot.data(),
-              key: documentSnapshot.id,
-            });
-          });
-
-          saveSpots(spts);
-        },
-        (err) => {
-          console.log(err.message);
-        }
-      );
     return () => {
       console.log("Tab unmount");
-      spotsSubscribe();
     };
   }, []);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -19,8 +19,34 @@ import IconButton from "./IconButton";
 
 function SpotView(props) {
   const { colors } = useTheme();
+  const [author, setAuthor] = useState("");
+
+  useEffect(() => {
+    getUsername();
+  }, []);
 
   //const { t, i18n } = useTranslation();
+
+  const getUsername = async () => {
+    try {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(props.createdBy)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            setAuthor(snapshot.data());
+          } else {
+            console.log("does not exist");
+          }
+        });
+    } catch (error) {
+      // error reading value
+      console.log(error.message);
+      alert(error.message);
+    }
+  };
 
   return (
     <Pressable
@@ -74,12 +100,12 @@ function SpotView(props) {
             },
           ]}
         >
-          {props.createdBy}
+          {author.username}
         </Text>
       </View>
       <IconButton
         onPress={() => {
-          if (props.user === props.createdBy) {
+          if (firebase.auth().currentUser.uid === props.createdBy) {
             Alert.alert(
               //t("Delete spot"),
               "Delete spot",
@@ -116,7 +142,7 @@ function SpotView(props) {
             );
           } else {
             //Alert.alert(t("You have to be creator of the spot."));
-            Alert.alert("You haave to be creator of the spot.");
+            Alert.alert("You have to be creator of the spot.");
           }
         }}
         iconName={"close"}

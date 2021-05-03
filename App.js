@@ -48,7 +48,7 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
+    let onAuthStateSub = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         setLoaded(true);
         setLoggedIn(false);
@@ -58,6 +58,10 @@ export default function App() {
         setLoggedIn(true);
       }
     });
+
+    return () => {
+      onAuthStateSub();
+    };
   }, []);
 
   if (!loaded) {

@@ -19,26 +19,20 @@ import BasicButton from "../components/BasicButton";
 export default function LoginScreen(props) {
   const { colors } = useTheme();
 
-  const [username, setUsername] = useState("");
-  //const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   function onLogIn() {
-    if (username === "") {
+    if (email === "" || password === "") {
       //setError(t("Fill the fields correctly."));
       //alert(loginError);
       alert("Fill the fields correctly!");
     } else {
       firebase
         .auth()
-        .signInAnonymously()
-        .then(() => {
-          //saveUser(username);
-          try {
-            AsyncStorage.setItem("username", username).then();
-          } catch (error) {
-            console.log(error.message);
-            alert(error.message);
-          }
+        .signInWithEmailAndPassword(email, password)
+        .then((result) => {
+          //console.log(result);
         })
         .catch((error) => {
           console.log(error);
@@ -79,13 +73,13 @@ export default function LoginScreen(props) {
             //returnKeyType="done"
             autoCapitalize={"none"}
             autoCorrect={false}
-            placeholder="Username"
+            placeholder="Email"
             placeholderTextColor={colors.placeholder}
-            onChangeText={(text) => setUsername(text)}
-            value={username}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
             elevation={5}
           />
-          {/* <TextInput
+          <TextInput
             style={[
               {
                 borderColor: colors.border,
@@ -104,7 +98,7 @@ export default function LoginScreen(props) {
             value={password}
             secureTextEntry={true}
             elevation={5}
-          /> */}
+          />
         </View>
         <View style={styles.buttonStyle}>
           <BasicButton
@@ -113,6 +107,31 @@ export default function LoginScreen(props) {
               onLogIn();
             }}
           />
+        </View>
+        <View style={styles.buttonStyle}>
+          <Text
+            style={{
+              fontSize: 15,
+              marginTop: 15,
+              marginBottom: 15,
+            }}
+          >
+            Don't have an account yet?{" "}
+          </Text>
+          <Text
+            style={{
+              color: colors.primary,
+              fontWeight: "700",
+              fontSize: 15,
+              marginTop: 15,
+              marginBottom: 15,
+            }}
+            onPress={() => {
+              props.navigation.navigate("Register");
+            }}
+          >
+            Sign Up
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -140,7 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   welcome: {
-    marginVertical: 30,
+    marginTop: 30,
   },
   welcomeStyle: {
     fontSize: 40,
