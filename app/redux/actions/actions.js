@@ -1,6 +1,7 @@
 import {
   USER_STATE_CHANGED,
   USERSPOTS_STATE_CHANGED,
+  USERCHALLENGES_STATE_CHANGED,
   USER_CHALLENGES_DONE_CHANGED,
   SPOTS_STATE_CHANGED,
   CHALLENGES_STATE_CHANGED,
@@ -33,29 +34,30 @@ export const setUser = (user) => {
 };
 
 export const setSpots = (spots) => {
-  return (dispatch) => {
-    firebase
-      .firestore()
-      .collection("spots")
-      .where("public", "==", true)
-      .onSnapshot(
-        (querySnapshot) => {
-          const spts = [];
+  // return (dispatch) => {
+  //   firebase
+  //     .firestore()
+  //     .collection("spots")
+  //     .where("public", "==", true)
+  //     .onSnapshot(
+  //       (querySnapshot) => {
+  //         const spts = [];
 
-          querySnapshot.forEach((documentSnapshot) => {
-            spts.push({
-              ...documentSnapshot.data(),
-              key: documentSnapshot.id,
-            });
-          });
+  //         querySnapshot.forEach((documentSnapshot) => {
+  //           spts.push({
+  //             ...documentSnapshot.data(),
+  //             key: documentSnapshot.id,
+  //           });
+  //         });
 
-          dispatch({ type: SPOTS_STATE_CHANGED, spots: spts });
-        },
-        (err) => {
-          console.log(err.message);
-        }
-      );
-  };
+  //         dispatch({ type: SPOTS_STATE_CHANGED, spots: spts });
+  //       },
+  //       (err) => {
+  //         console.log(err.message);
+  //       }
+  //     );
+  // };
+  return { type: SPOTS_STATE_CHANGED, spots: spots };
 };
 
 export const setUserSpots = (spots) => {
@@ -75,6 +77,34 @@ export const setUserSpots = (spots) => {
             });
           });
           dispatch({ type: USERSPOTS_STATE_CHANGED, userSpots: spts });
+        },
+        (err) => {
+          console.log(err.message);
+        }
+      );
+  };
+};
+
+export const setUserChallenges = (spots) => {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("challenges")
+      .where("createdBy", "==", firebase.auth().currentUser.uid)
+      .onSnapshot(
+        (querySnapshot) => {
+          const chlngs = [];
+
+          querySnapshot.forEach((documentSnapshot) => {
+            chlngs.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
+          });
+          dispatch({
+            type: USERCHALLENGES_STATE_CHANGED,
+            userChallenges: chlngs,
+          });
         },
         (err) => {
           console.log(err.message);

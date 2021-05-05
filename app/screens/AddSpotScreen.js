@@ -7,16 +7,15 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  Switch,
 } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import "firebase/storage";
 import { useTheme } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-//import * as Permissions from "expo-permissions";
 
-import { useDispatch, useSelector } from "react-redux";
-import { addSpot } from "../redux/actions/actions";
+import { useSelector } from "react-redux";
 
 import BasicButton from "../components/BasicButton";
 
@@ -25,8 +24,8 @@ const AddSpotScreen = (props) => {
 
   async function getImageAsync() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
     }
     if (status === "granted") {
       pickImage();
@@ -44,9 +43,12 @@ const AddSpotScreen = (props) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const dispatch = useDispatch();
-  const addingSpot = (spot) => dispatch(addSpot(spot));
-  const username = useSelector((state) => state.userReducer.user);
+  const [isPublic, setIsPublic] = useState(false);
+  const toggleSwitch = () => {
+    setIsPublic((previousState) => !previousState);
+  };
+
+  const username = useSelector((state) => state.userReducer.user.username);
 
   async function saveSpot() {
     if (
@@ -67,7 +69,8 @@ const AddSpotScreen = (props) => {
         latlng: geoPoint,
         description: description,
         imageURL: image,
-        createdBy: username,
+        createdBy: firebase.auth().currentUser.uid,
+        public: isPublic,
       };
       console.log(spot);
 
@@ -244,6 +247,17 @@ const AddSpotScreen = (props) => {
             elevation={5}
           />
 
+          <View style={styles.row}>
+            <Text>Do you want this spot to be public? </Text>
+            <Switch
+              style={styles.switch}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isPublic ? "green" : "#e13333"}
+              onValueChange={toggleSwitch}
+              value={isPublic}
+            />
+          </View>
+
           <Text
             style={{
               color: colors.primary,
@@ -309,8 +323,18 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     margin: 10,
-    paddingLeft: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
     fontWeight: "bold",
+  },
+  switch: {
+    marginHorizontal: 30,
+    elevation: 1,
+    bottom: 3,
+  },
+  row: {
+    flexDirection: "row",
+    margin: 20,
+    marginBottom: 10,
   },
 });

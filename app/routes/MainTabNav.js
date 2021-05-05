@@ -8,6 +8,7 @@ import {
   setSpots,
   setUser,
   setUserSpots,
+  setUserChallenges,
   setUserChallengesDone,
   clearData,
 } from "../redux/actions/actions";
@@ -25,14 +26,39 @@ const Tab = createBottomTabNavigator();
 export default function MainTabNav() {
   const dispatch = useDispatch();
 
+  const saveSpots = (spots) => dispatch(setSpots(spots));
+
   useEffect(() => {
     dispatch(clearData());
     dispatch(setUser());
-    dispatch(setSpots());
     dispatch(setUserSpots());
+    dispatch(setUserChallenges());
     dispatch(setUserChallengesDone());
 
+    let spotSubscribe = firebase
+      .firestore()
+      .collection("spots")
+      .where("public", "==", true)
+      .onSnapshot(
+        (querySnapshot) => {
+          const spts = [];
+
+          querySnapshot.forEach((documentSnapshot) => {
+            spts.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
+          });
+
+          saveSpots(spts);
+        },
+        (err) => {
+          console.log(err.message);
+        }
+      );
+
     return () => {
+      spotSubscribe();
       console.log("Tab unmount");
     };
   }, []);

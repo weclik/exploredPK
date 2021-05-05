@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  Switch,
 } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -23,8 +24,8 @@ const AddChallengeScreen = (props) => {
 
   async function getImageAsync() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
     }
     if (status === "granted") {
       pickImage();
@@ -32,6 +33,11 @@ const AddChallengeScreen = (props) => {
       alert("Permission wasn't granted!");
     }
   }
+
+  const [isPublic, setIsPublic] = useState(false);
+  const toggleSwitch = () => {
+    setIsPublic((previousState) => !previousState);
+  };
 
   const { spot } = props.route.params;
 
@@ -41,23 +47,23 @@ const AddChallengeScreen = (props) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  const username = useSelector((state) => state.userReducer.user);
+  const username = useSelector((state) => state.userReducer.user.username);
 
   async function addChallenge() {
     if (name === "" || description === "") {
       alert("Please fill all of the fields correctly.");
     } else {
-      console.log(spot);
       let challenge = {
         name: name,
         description: description,
         photoURL: image,
+        onSpot: spot.key,
+        createdBy: firebase.auth().currentUser.uid,
+        public: isPublic,
       };
       try {
         firebase
           .firestore()
-          .collection("spots")
-          .doc(spot.key)
           .collection("challenges")
           .doc()
           .set(challenge)
@@ -86,7 +92,7 @@ const AddChallengeScreen = (props) => {
     let ref = firebase
       .storage()
       .ref()
-      .child("spots/" + username + Date.parse(new Date()) + "-photo.jpg");
+      .child("challenges/" + username + Date.parse(new Date()) + "-photo.jpg");
     await ref.put(blob);
     let extUri = await ref.getDownloadURL();
 
@@ -164,6 +170,17 @@ const AddChallengeScreen = (props) => {
             elevation={5}
           />
 
+          <View style={styles.row}>
+            <Text>Do you want this challenge to be public? </Text>
+            <Switch
+              style={styles.switch}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isPublic ? "green" : "#e13333"}
+              onValueChange={toggleSwitch}
+              value={isPublic}
+            />
+          </View>
+
           <Text
             style={{
               color: colors.primary,
@@ -212,6 +229,11 @@ const styles = StyleSheet.create({
     fontSize: 50,
     alignSelf: "center",
   },
+  row: {
+    flexDirection: "row",
+    margin: 20,
+    marginBottom: 10,
+  },
   title: {
     top: 20,
     marginBottom: 30,
@@ -222,6 +244,11 @@ const styles = StyleSheet.create({
 
     marginBottom: 30,
   },
+  switch: {
+    elevation: 1,
+    marginHorizontal: 30,
+    bottom: 3,
+  },
   inputStyle: {
     marginTop: 20,
     marginBottom: 30,
@@ -231,7 +258,7 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     margin: 10,
-    paddingLeft: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
     fontWeight: "bold",
   },

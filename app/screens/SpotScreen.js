@@ -53,7 +53,15 @@ const SpotScreen = (props) => {
     props.navigation.setOptions({
       headerRight: () => (
         <IconButton
-          onPress={() => props.navigation.navigate("EditSpot", { spot: spot })}
+          onPress={() => {
+            if (firebase.auth().currentUser.uid === spot.createdBy) {
+              props.navigation.navigate("EditSpot", { spot: spot });
+            } else {
+              alert(
+                "You have to be creator of the spot to be able to edit it."
+              );
+            }
+          }}
           iconName="edit"
           style={{ right: 15, bottom: 5 }}
         />
@@ -64,9 +72,9 @@ const SpotScreen = (props) => {
   useEffect(() => {
     const challengeSubscribe = firebase
       .firestore()
-      .collection("spots")
-      .doc(spot.key)
       .collection("challenges")
+      .where("onSpot", "==", spot.key)
+      .where("public", "==", true)
       .onSnapshot(
         (querySnapshot) => {
           const chlngs = [];
@@ -191,13 +199,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleStyle: {
-    fontSize: 40,
+    fontSize: 30,
     alignSelf: "center",
   },
   title: {
     height: 100,
     alignItems: "center",
     justifyContent: "center",
+    marginHorizontal: 30,
   },
   description: {
     flex: 1,

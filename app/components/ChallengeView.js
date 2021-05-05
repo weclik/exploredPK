@@ -27,7 +27,6 @@ function ChallengeView(props) {
   const { colors } = useTheme();
 
   const { challenge } = props;
-  const { spot } = props;
 
   const dispatch = useDispatch();
 
@@ -143,6 +142,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     left: 5,
+    width: "90%",
   },
   switch: {
     position: "absolute",

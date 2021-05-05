@@ -34,12 +34,18 @@ const ChallengeScreen = (props) => {
     props.navigation.setOptions({
       headerRight: () => (
         <IconButton
-          onPress={() =>
-            props.navigation.navigate("EditChallenge", {
-              spot: spot,
-              challenge: challenge,
-            })
-          }
+          onPress={() => {
+            if (firebase.auth().currentUser.uid === challenge.createdBy) {
+              props.navigation.navigate("EditChallenge", {
+                spot: spot,
+                challenge: challenge,
+              });
+            } else {
+              alert(
+                "You have to be creator of this challenge to be able to edit it."
+              );
+            }
+          }}
           iconName="edit"
           style={{ right: 15, bottom: 5 }}
         />
@@ -72,8 +78,6 @@ const ChallengeScreen = (props) => {
                   console.log("yes Pressed");
                   firebase
                     .firestore()
-                    .collection("spots")
-                    .doc(spot.key)
                     .collection("challenges")
                     .doc(challenge.key)
                     .delete()
@@ -129,13 +133,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleStyle: {
-    fontSize: 40,
+    fontSize: 30,
     alignSelf: "center",
   },
   title: {
     height: 100,
     alignItems: "center",
     justifyContent: "center",
+    marginHorizontal: 40,
+    marginTop: 15,
   },
   description: {
     flex: 1,

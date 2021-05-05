@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
 
 import * as firebase from "firebase";
@@ -8,6 +8,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import IconButton from "../components/IconButton";
 
 import SpotView from "../components/SpotView";
+import ChallengeView from "../components/ChallengeView";
 import { useSelector } from "react-redux";
 
 const Tab = createMaterialTopTabNavigator();
@@ -17,6 +18,9 @@ export default function ProfileScreen(props) {
 
   const username = useSelector((state) => state.userReducer.user.username);
   const userSpots = useSelector((state) => state.userReducer.userSpots);
+  const userChallenges = useSelector(
+    (state) => state.userReducer.userChallenges
+  );
 
   function onLogOut() {
     Alert.alert(
@@ -101,7 +105,31 @@ export default function ProfileScreen(props) {
             </View>
           )}
         </Tab.Screen>
-        <Tab.Screen name="My challenges">{() => <View></View>}</Tab.Screen>
+        <Tab.Screen name="My challenges">
+          {() => (
+            <View>
+              {userChallenges.length !== 0 && (
+                <FlatList
+                  //style={{ }}
+                  numColumns={3}
+                  data={userChallenges}
+                  keyExtractor={(item) => item.key}
+                  renderItem={({ item }) => (
+                    <ChallengeView
+                      onPress={() =>
+                        props.navigation.navigate("Challenge", {
+                          challenge: item,
+                          //spot: spot,
+                        })
+                      }
+                      challenge={item}
+                    />
+                  )}
+                />
+              )}
+            </View>
+          )}
+        </Tab.Screen>
       </Tab.Navigator>
     </View>
   );

@@ -142,7 +142,9 @@ function SpotView(props) {
             );
           } else {
             //Alert.alert(t("You have to be creator of the spot."));
-            Alert.alert("You have to be creator of the spot.");
+            Alert.alert(
+              "You have to be creator of the spot to be able to delete it."
+            );
           }
         }}
         iconName={"close"}
