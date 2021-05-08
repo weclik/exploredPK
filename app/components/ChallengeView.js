@@ -9,6 +9,7 @@ import {
   Alert,
   Switch,
 } from "react-native";
+import Checkbox from "expo-checkbox";
 
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -115,12 +116,18 @@ function ChallengeView(props) {
           </Text>
         </View>
       </View>
-      <Switch
+      {/* <Switch
         style={styles.switch}
         trackColor={{ false: "#767577", true: "#81b0ff" }}
         thumbColor={isEnabled ? "green" : "#f4f3f4"}
         onValueChange={toggleSwitch}
         value={isEnabled}
+      /> */}
+      <Checkbox
+        style={[styles.switch, styles.txtShadow]}
+        value={isEnabled}
+        onValueChange={toggleSwitch}
+        color={isEnabled ? "black" : "black"}
       />
     </Pressable>
   );
@@ -129,9 +136,9 @@ function ChallengeView(props) {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    borderBottomWidth: 1,
-    borderColor: "lightgrey",
-    borderRadius: 20,
+    //borderBottomWidth: 1,
+    //borderColor: "lightgrey",
+    //borderRadius: 20,
     margin: 5,
     flex: 1 / 3,
   },
@@ -149,6 +156,8 @@ const styles = StyleSheet.create({
     top: 15,
     right: 5,
     elevation: 1,
+    borderWidth: 0.5,
+    borderColor: "black",
   },
   titleStyle: {
     fontSize: 15,

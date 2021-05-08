@@ -19,17 +19,24 @@ export default function NavigateScreen(props) {
   //const GOOGLE_MAPS_APIKEY = "AIzaSyCTouMeor8kOIr-D1BFAG_9GzyHVxtbWPY";
 
   async function askPermissionAsync() {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      setPermission(true);
-    } else {
-      alert("Location permission not granted");
-    }
+    // let per = await Location.getForegroundPermissionsAsync();
+    // if (per.status === "granted") {
+    setPermission(true);
+    // } else {
+    //   alert("Location permission not granted");
+    // }
   }
 
   useEffect(() => {
     if (!permission) {
       askPermissionAsync();
+      console.log(spot);
+      setLocRegion({
+        latitude: spot.latlng.latitude,
+        longitude: spot.latlng.longitude,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.01,
+      });
       if (locRegion) {
         mapRef.current.animateToRegion(locRegion, 1000);
       }
@@ -46,23 +53,13 @@ export default function NavigateScreen(props) {
         showsUserLocation={permission}
         showsMyLocationButton={true}
         initialRegion={{
-          latitude: 48.71946342885445,
-          longitude: 21.24937682284641,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitude: spot.latlng.latitude, //48.71946342885445,
+          longitude: spot.latlng.longitude, //21.24937682284641,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.01,
         }}
         onUserLocationChange={(e) => {
           setLocation(e.nativeEvent.coordinate);
-          location &&
-            setLocRegion({
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: 0.001,
-              longitudeDelta: 0.01,
-            });
-        }}
-        onPress={(e) => {
-          setNewMarker(newMarker === null ? e.nativeEvent.coordinate : null);
         }}
       >
         <Marker
@@ -83,7 +80,7 @@ export default function NavigateScreen(props) {
               longitude: location.longitude,
             }}
             title="Your location"
-            image={require("../../assets/marker.png")}
+            //image={require("../../assets/position.png")}
           ></Marker>
         )}
       </MapView>

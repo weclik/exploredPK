@@ -169,7 +169,7 @@ const EditSpotScreen = (props) => {
           />
 
           <View style={styles.row}>
-            <Text>Make it public? </Text>
+            <Text style={{ color: colors.text }}>Make it public? </Text>
             <Switch
               style={styles.switch}
               trackColor={{ false: "#767577", true: "#81b0ff" }}

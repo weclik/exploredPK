@@ -171,7 +171,9 @@ const AddChallengeScreen = (props) => {
           />
 
           <View style={styles.row}>
-            <Text>Do you want this challenge to be public? </Text>
+            <Text style={{ color: colors.text }}>
+              Do you want this challenge to be public?{" "}
+            </Text>
             <Switch
               style={styles.switch}
               trackColor={{ false: "#767577", true: "#81b0ff" }}

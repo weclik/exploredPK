@@ -48,6 +48,7 @@ const ChallengeScreen = (props) => {
           }}
           iconName="edit"
           style={{ right: 15, bottom: 5 }}
+          iconColor={colors.text}
         />
       ),
     });

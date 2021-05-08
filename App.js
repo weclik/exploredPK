@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
 import {
-  AppearanceProvider,
+  View,
+  ActivityIndicator,
   Appearance,
   useColorScheme,
-} from "react-native-appearance";
+} from "react-native";
+//import { AppearanceProvider, Appearance } from "react-native-appearance";
 import themes from "./app/constants/Theme";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -75,63 +76,63 @@ export default function App() {
   if (!loggedIn) {
     return (
       //<Provider store={store()}>
-      <AppearanceProvider>
-        <LoginStackNav theme={colorScheme} />
-      </AppearanceProvider>
+      // <AppearanceProvider>
+      <LoginStackNav theme={colorScheme} />
+      // </AppearanceProvider>
       //</Provider>
     );
   }
 
   return (
     <Provider store={store()}>
-      <AppearanceProvider>
-        <NavigationContainer
-          theme={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
-        >
-          <Stack.Navigator initialRouteName={"MainTab"}>
-            <Stack.Screen
-              name="MainTab"
-              component={MainTab}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Spot"
-              component={SpotScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="AddSpot"
-              component={AddSpotScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="Challenge"
-              component={ChallengeScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="EditSpot"
-              component={EditSpotScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="EditChallenge"
-              component={EditChallengeScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="AddChallenge"
-              component={AddChallengeScreen}
-              options={{ headerShown: true }}
-            />
-            <Stack.Screen
-              name="Navigate"
-              component={NavigateScreen}
-              options={{ headerShown: true }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </AppearanceProvider>
+      {/* <AppearanceProvider> */}
+      <NavigationContainer
+        theme={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
+      >
+        <Stack.Navigator initialRouteName={"MainTab"}>
+          <Stack.Screen
+            name="MainTab"
+            component={MainTab}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Spot"
+            component={SpotScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="AddSpot"
+            component={AddSpotScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Challenge"
+            component={ChallengeScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="EditSpot"
+            component={EditSpotScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="EditChallenge"
+            component={EditChallengeScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="AddChallenge"
+            component={AddChallengeScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Navigate"
+            component={NavigateScreen}
+            options={{ headerShown: true }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      {/* </AppearanceProvider> */}
     </Provider>
   );
 }

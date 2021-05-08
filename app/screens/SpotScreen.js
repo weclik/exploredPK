@@ -6,8 +6,10 @@ import {
   ScrollView,
   Image,
   FlatList,
+  Alert,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { Rating, AirbnbRating } from "react-native-ratings";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as Location from "expo-location";
@@ -16,7 +18,7 @@ import * as Linking from "expo-linking";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setChallenges } from "../redux/actions/actions";
+import { setChallenges, setRating } from "../redux/actions/actions";
 
 import IconButton from "../components/IconButton";
 import BasicButton from "../components/BasicButton";
@@ -31,9 +33,13 @@ const SpotScreen = (props) => {
   const { spot } = props.route.params;
   const { colors } = useTheme();
 
+  const [average, setAverage] = useState(0);
+
   const dispatch = useDispatch();
   const saveChallenges = (challenges) => dispatch(setChallenges(challenges));
+  const saveRating = (rating) => dispatch(setRating(rating));
 
+  const rating = useSelector((state) => state.spotsReducer.rating);
   const challenges = useSelector((state) => state.spotsReducer.challenges);
 
   async function getRoute() {
@@ -46,6 +52,68 @@ const SpotScreen = (props) => {
       Linking.openURL("https://www.google.com/maps/dir/" + route);
     } else {
       alert("Location permission not granted");
+    }
+  }
+
+  function addRating(value) {
+    firebase
+      .firestore()
+      .collection("spots")
+      .doc(spot.key)
+      .collection("rating")
+      .doc(firebase.auth().currentUser.uid)
+      .set({ rating: value })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error.message);
+        alert(error.message);
+      });
+  }
+
+  function ratingWord(value) {
+    if (value === 0) {
+      return "Unrated";
+    } else if (value <= 1) {
+      return "Bad";
+    } else if (value <= 2) {
+      return "Meh";
+    } else if (value <= 3) {
+      return "Decent";
+    } else if (value <= 4) {
+      return "Good";
+    } else if (value <= 5) {
+      return "Excellent";
+    }
+  }
+
+  function rateSpot(value) {
+    console.log(rating);
+    if (rating.find((item) => item.key === firebase.auth().currentUser.uid)) {
+      Alert.alert(
+        //t("Delete spot"),
+        "You already rated this spot!",
+        //t("Are you sure you want to delete this spot?"),
+        "Do you want to change your rating?",
+        [
+          {
+            //text: t("Cancel"),
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            //text: t("Yes"),
+            text: "Yes",
+            onPress: () => {
+              console.log("yes Pressed");
+              addRating(value);
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      addRating(value);
     }
   }
 
@@ -64,6 +132,7 @@ const SpotScreen = (props) => {
           }}
           iconName="edit"
           style={{ right: 15, bottom: 5 }}
+          iconColor={colors.text}
         />
       ),
     });
@@ -93,15 +162,51 @@ const SpotScreen = (props) => {
         }
       );
 
+    const ratingSubscribe = firebase
+      .firestore()
+      .collection("spots")
+      .doc(spot.key)
+      .collection("rating")
+      .onSnapshot(
+        (querySnapshot) => {
+          const rtngs = [];
+
+          querySnapshot.forEach((documentSnapshot) => {
+            rtngs.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
+          });
+          saveRating(rtngs);
+
+          if (rtngs.length !== 0) {
+            let sum = rtngs
+              .map(function (item) {
+                return item.rating;
+              })
+              .reduce(function (curval, newval) {
+                return curval + newval;
+              });
+            let avrg = sum / rtngs.length;
+            setAverage(avrg);
+          }
+        },
+        (err) => {
+          console.log(err.message);
+        }
+      );
+
     return () => {
       challengeSubscribe();
+      ratingSubscribe();
     };
   }, []);
 
   return (
     <Tab.Navigator
       tabBarOptions={{
-        showLabel: true,
+        showLabel: false,
+        showIcon: true,
         labelStyle: {
           fontSize: 14,
         },
@@ -126,7 +231,29 @@ const SpotScreen = (props) => {
             <IconButton
               onPress={() => {
                 //props.navigation.navigate("Navigate", { spot: spot });
-                getRoute();
+                Alert.alert(
+                  //t("Delete spot"),
+                  "Get directions",
+                  //t("Are you sure you want to delete this spot?"),
+                  "Do you want to get directions to this spot?",
+                  [
+                    {
+                      //text: t("Cancel"),
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel Pressed"),
+                      style: "cancel",
+                    },
+                    {
+                      //text: t("Yes"),
+                      text: "Yes",
+                      onPress: () => {
+                        console.log("yes Pressed");
+                        getRoute();
+                      },
+                    },
+                  ],
+                  { cancelable: false }
+                );
               }}
               style={styles.myLocationStyle}
               iconName={"enviromento"}
@@ -137,6 +264,40 @@ const SpotScreen = (props) => {
                 {spot.title}
               </Text>
             </View>
+            {/* <AirbnbRating
+              starContainerStyle={styles.rating}
+              selectedColor={colors.title}
+              reviewColor={colors.title}
+              showRating={false}
+              count={5}
+              defaultRating={average}
+              size={15}
+              onFinishRating={(value) => {
+                rateSpot(value);
+              }}
+            /> */}
+            <Rating
+              type="custom"
+              ratingColor={colors.title}
+              tintColor={colors.background}
+              startingValue={average}
+              ratingBackgroundColor="lightgrey"
+              ratingCount={5}
+              imageSize={25}
+              onFinishRating={(value) => {
+                rateSpot(value);
+              }}
+              style={styles.rating}
+            />
+            <Text
+              style={[
+                styles.titleStyle,
+                { color: colors.text, marginBottom: 10, fontSize: 24 },
+              ]}
+            >
+              {ratingWord(average)}{" "}
+              {Math.round((average + Number.EPSILON) * 10) / 10}
+            </Text>
             <Image
               style={{
                 height: 250,
@@ -226,4 +387,5 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 20,
   },
+  rating: { marginBottom: 10 },
 });

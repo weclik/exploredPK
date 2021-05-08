@@ -5,6 +5,7 @@ import {
   USER_CHALLENGES_DONE_CHANGED,
   SPOTS_STATE_CHANGED,
   CHALLENGES_STATE_CHANGED,
+  RATING_STATE_CHANGED,
   CLEAR_DATA,
 } from "./types";
 import * as firebase from "firebase";
@@ -142,4 +143,8 @@ export const setUserChallengesDone = () => {
 
 export const setChallenges = (challenges) => {
   return { type: CHALLENGES_STATE_CHANGED, challenges: challenges };
+};
+
+export const setRating = (rating) => {
+  return { type: RATING_STATE_CHANGED, rating: rating };
 };

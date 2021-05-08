@@ -51,10 +51,7 @@ export default function MapScreen(props) {
           }}
         >
           <Callout tooltip>
-            <MarkerView
-              spot={marker}
-              location={location}
-            />
+            <MarkerView spot={marker} location={location} />
           </Callout>
         </Marker>
       );
@@ -63,7 +60,7 @@ export default function MapScreen(props) {
 
   return (
     <View style={styles.container}>
-    <StatusBar />
+      <StatusBar />
       <View style={[styles.headerStyle, { borderColor: colors.title }]}>
         <Text style={[styles.titleStyle, { color: colors.title }]}>
           Explore
@@ -150,7 +147,7 @@ const styles = StyleSheet.create({
   },
   headerStyle: {
     flex: 0.1,
-    marginTop: 20,
+    marginTop: 10,
     borderBottomWidth: 2,
     borderColor: "#204774",
   },
