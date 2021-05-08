@@ -7,9 +7,11 @@ import { useSelector } from "react-redux";
 import IconButton from "../components/IconButton";
 import MarkerView from "../components/MarkerView";
 import { useTheme } from "@react-navigation/native";
+import mapStyles from "../constants/MapStyles.js";
 
 export default function MapScreen(props) {
   const { colors } = useTheme();
+  const theme = useTheme();
 
   const spots = useSelector((state) => state.spotsReducer.spots);
   const [location, setLocation] = useState(null);
@@ -107,6 +109,9 @@ export default function MapScreen(props) {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        customMapStyle={
+          theme.dark ? mapStyles.darkMapStyle : mapStyles.mapStyle
+        }
         onUserLocationChange={(e) => {
           setLocation(e.nativeEvent.coordinate);
           location &&
