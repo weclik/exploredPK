@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   Switch,
+  Alert,
 } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -51,7 +52,21 @@ const AddChallengeScreen = (props) => {
 
   async function addChallenge() {
     if (name === "" || description === "") {
-      alert("Please fill all of the fields correctly.");
+      Alert.alert(
+        //t("Delete spot"),
+        "Empty fields",
+        //t("Are you sure you want to delete this spot?"),
+        "Please fill all the fields correctly",
+        [
+          {
+            //text: t("Cancel"),
+            text: "Ok",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
     } else {
       let challenge = {
         name: name,

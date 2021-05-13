@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 
 import { useTheme } from "@react-navigation/native";
 
-import firebase from 'firebase'
+import firebase from "firebase";
 import "firebase/firestore";
 
 import BasicButton from "../components/BasicButton";
@@ -16,27 +16,48 @@ export default function RegisterScreen(props) {
   const [password, setPassword] = useState("");
   const [verPassword, setVerPassword] = useState("");
 
-
   function onSignUp() {
-    if (username === "" || password === "" || verPassword === "" || email === "") {
-      //alert(t("Fill the fields correctly."));
-      alert("Fill the fields correctly.");
+    if (
+      username === "" ||
+      password === "" ||
+      verPassword === "" ||
+      email === ""
+    ) {
+      Alert.alert(
+        //t("Delete spot"),
+        "Empty fields",
+        //t("Are you sure you want to delete this spot?"),
+        "Please fill all the fields correctly",
+        [
+          {
+            //text: t("Cancel"),
+            text: "Ok",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
     } else {
       try {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((result) => {
-                firebase.firestore().collection("users")
-                    .doc(firebase.auth().currentUser.uid)
-                    .set({
-                        username,
-                        email
-                    })
-                console.log(result)
-            })
-            .catch((error) => {
-                console.log(error);
-                alert(error.message);
-            })
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then((result) => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser.uid)
+              .set({
+                username,
+                email,
+              });
+            console.log(result);
+          })
+          .catch((error) => {
+            console.log(error);
+            alert(error.message);
+          });
       } catch (error) {
         console.log(error.message);
         alert(error.message);

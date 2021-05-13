@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   Switch,
+  Alert,
 } from "react-native";
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -58,7 +59,22 @@ const AddSpotScreen = (props) => {
       description === "" ||
       image === null
     ) {
-      alert("Please fill all of the fields correctly.");
+      Alert.alert(
+        //t("Delete spot"),
+        "Empty fields",
+        //t("Are you sure you want to delete this spot?"),
+        "Please fill all the fields correctly",
+        [
+          {
+            //text: t("Cancel"),
+            text: "Ok",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
+      return;
     } else {
       let geoPoint = new firebase.firestore.GeoPoint(
         Number(latitude),

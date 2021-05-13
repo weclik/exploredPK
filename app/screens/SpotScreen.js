@@ -215,7 +215,7 @@ const SpotScreen = (props) => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Info") {
-            iconName = focused ? "info-circle" : "info";
+            iconName = focused ? "info-circle" : "info-circle";
           } else if (route.name === "Challenges") {
             iconName = focused ? "trophy" : "trophy";
           }

@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
   },
   switch: {
     position: "absolute",
-    top: 15,
-    right: 5,
+    top: 7,
+    right: 7,
     elevation: 1,
     borderWidth: 0.5,
     borderColor: "black",

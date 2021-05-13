@@ -103,7 +103,7 @@ export default function App() {
           <Stack.Screen
             name="AddSpot"
             component={AddSpotScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, title: "" }}
           />
           <Stack.Screen
             name="Challenge"
@@ -113,22 +113,22 @@ export default function App() {
           <Stack.Screen
             name="EditSpot"
             component={EditSpotScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, title: "" }}
           />
           <Stack.Screen
             name="EditChallenge"
             component={EditChallengeScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, title: "" }}
           />
           <Stack.Screen
             name="AddChallenge"
             component={AddChallengeScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, title: "" }}
           />
           <Stack.Screen
             name="Navigate"
             component={NavigateScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, title: "" }}
           />
         </Stack.Navigator>
       </NavigationContainer>

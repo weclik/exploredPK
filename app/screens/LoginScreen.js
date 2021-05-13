@@ -24,7 +24,21 @@ export default function LoginScreen(props) {
     if (email === "" || password === "") {
       //setError(t("Fill the fields correctly."));
       //alert(loginError);
-      alert("Fill the fields correctly!");
+      Alert.alert(
+        //t("Delete spot"),
+        "Empty fields",
+        //t("Are you sure you want to delete this spot?"),
+        "Please fill all the fields correctly",
+        [
+          {
+            //text: t("Cancel"),
+            text: "Ok",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
     } else {
       firebase
         .auth()
@@ -112,9 +126,10 @@ export default function LoginScreen(props) {
               fontSize: 15,
               marginTop: 15,
               marginBottom: 15,
+              color: colors.text,
             }}
           >
-            Don't have an account yet?{" "}
+            Don't have an account yet?{"   "}
           </Text>
           <Text
             style={{
