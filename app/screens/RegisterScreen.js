@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Alert,
+} from "react-native";
 
 import { useTheme } from "@react-navigation/native";
 
@@ -17,15 +24,10 @@ export default function RegisterScreen(props) {
   const [verPassword, setVerPassword] = useState("");
 
   function onSignUp() {
-    if (
-      username === "" ||
-      password === "" ||
-      verPassword === "" ||
-      email === ""
-    ) {
+    if (username === "") {
       Alert.alert(
         //t("Delete spot"),
-        "Empty fields",
+        "Empty username",
         //t("Are you sure you want to delete this spot?"),
         "Please fill all the fields correctly",
         [
@@ -56,11 +58,11 @@ export default function RegisterScreen(props) {
           })
           .catch((error) => {
             console.log(error);
-            alert(error.message);
+            Alert.alert(error.message);
           });
       } catch (error) {
         console.log(error.message);
-        alert(error.message);
+        Alert.alert(error.message);
       }
     }
   }
@@ -162,7 +164,7 @@ export default function RegisterScreen(props) {
               if (password === verPassword) {
                 onSignUp();
               } else {
-                alert("Not matching passwords!");
+                Alert.alert("Not matching passwords!");
               }
             }}
           />

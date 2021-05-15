@@ -98,7 +98,7 @@ function ChallengeView(props) {
           width: "100%",
           borderRadius: 5,
           borderWidth: isEnabled ? 3 : 1,
-          borderColor: isEnabled ? "green" : "lightgrey",
+          borderColor: isEnabled ? "green" : "red",
           resizeMode: "cover",
         }}
         source={{
@@ -127,7 +127,7 @@ function ChallengeView(props) {
         style={[styles.switch, styles.txtShadow]}
         value={isEnabled}
         onValueChange={toggleSwitch}
-        color={isEnabled ? "black" : "black"}
+        color={challenge.photoURL === null ? colors.text : "black"}
       />
     </Pressable>
   );
@@ -157,7 +157,6 @@ const styles = StyleSheet.create({
     right: 7,
     elevation: 1,
     borderWidth: 0.5,
-    borderColor: "black",
   },
   titleStyle: {
     fontSize: 15,

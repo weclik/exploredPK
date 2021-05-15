@@ -43,7 +43,9 @@ export default function SpotListScreen(props) {
     <View style={styles.container}>
       <StatusBar />
       <View style={styles.title}>
-        <Text style={[styles.txtTitle, { color: colors.primary }]}>Spots</Text>
+        <Text style={[styles.txtTitle, { color: colors.primary }]}>
+          Public spots
+        </Text>
       </View>
       <FlatList
         //style={{ }}

@@ -6,6 +6,7 @@ import {
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import * as firebase from "firebase";
 
@@ -21,7 +22,7 @@ export default function LoginScreen(props) {
   const [password, setPassword] = useState("");
 
   function onLogIn() {
-    if (email === "" || password === "") {
+    if (email === "") {
       //setError(t("Fill the fields correctly."));
       //alert(loginError);
       Alert.alert(
@@ -48,7 +49,7 @@ export default function LoginScreen(props) {
         })
         .catch((error) => {
           console.log(error);
-          alert(error.message);
+          Alert.alert(error.message);
         });
     }
   }

@@ -107,6 +107,19 @@ const ChallengeScreen = (props) => {
         </Text>
         {isDone && <Text style={{ color: "green", fontSize: 20 }}>DONE</Text>}
       </View>
+      <Text
+        onPress={() => props.navigation.navigate("Spot", { spot: spot })}
+        style={[
+          {
+            color: colors.text,
+            fontSize: 20,
+            marginLeft: 20,
+            marginBottom: 10,
+          },
+        ]}
+      >
+        On spot: {spot?.title}
+      </Text>
       <Image
         style={{
           height: 250,

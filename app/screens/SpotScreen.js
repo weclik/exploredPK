@@ -7,6 +7,7 @@ import {
   Image,
   FlatList,
   Alert,
+  Modal,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Rating, AirbnbRating } from "react-native-ratings";
@@ -23,6 +24,8 @@ import { setChallenges, setRating } from "../redux/actions/actions";
 import IconButton from "../components/IconButton";
 import BasicButton from "../components/BasicButton";
 import ChallengeView from "../components/ChallengeView";
+import AddCommentModalView from "../components/AddCommentModalView";
+import CommentView from "../components/CommentView";
 
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -35,12 +38,19 @@ const SpotScreen = (props) => {
 
   const [average, setAverage] = useState(0);
 
+  const [starNum, setStarNum] = useState(0);
+  const [comment, setComment] = useState("");
+  const [isAnonym, setIsAnonym] = useState(true);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
   const dispatch = useDispatch();
   const saveChallenges = (challenges) => dispatch(setChallenges(challenges));
   const saveRating = (rating) => dispatch(setRating(rating));
 
   const rating = useSelector((state) => state.spotsReducer.rating);
   const challenges = useSelector((state) => state.spotsReducer.challenges);
+  const username = useSelector((state) => state.userReducer.user.username);
 
   async function getRoute() {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -55,14 +65,19 @@ const SpotScreen = (props) => {
     }
   }
 
-  function addRating(value) {
+  function addRating() {
     firebase
       .firestore()
       .collection("spots")
       .doc(spot.key)
       .collection("rating")
       .doc(firebase.auth().currentUser.uid)
-      .set({ rating: value })
+      .set({
+        rating: starNum,
+        anonymous: isAnonym,
+        user: isAnonym ? null : username,
+        comment: comment,
+      })
       .then(() => {})
       .catch((error) => {
         console.log(error.message);
@@ -86,7 +101,7 @@ const SpotScreen = (props) => {
     }
   }
 
-  function rateSpot(value) {
+  function rateSpot() {
     console.log(rating);
     if (rating.find((item) => item.key === firebase.auth().currentUser.uid)) {
       Alert.alert(
@@ -106,14 +121,14 @@ const SpotScreen = (props) => {
             text: "Yes",
             onPress: () => {
               console.log("yes Pressed");
-              addRating(value);
+              addRating();
             },
           },
         ],
         { cancelable: false }
       );
     } else {
-      addRating(value);
+      addRating();
     }
   }
 
@@ -218,6 +233,8 @@ const SpotScreen = (props) => {
             iconName = focused ? "info-circle" : "info-circle";
           } else if (route.name === "Challenges") {
             iconName = focused ? "trophy" : "trophy";
+          } else if (route.name === "Comments") {
+            iconName = focused ? "comment-dots" : "comment";
           }
           return <FontAwesome5 name={iconName} size={20} color={color} />;
         },
@@ -264,18 +281,6 @@ const SpotScreen = (props) => {
                 {spot.title}
               </Text>
             </View>
-            {/* <AirbnbRating
-              starContainerStyle={styles.rating}
-              selectedColor={colors.title}
-              reviewColor={colors.title}
-              showRating={false}
-              count={5}
-              defaultRating={average}
-              size={15}
-              onFinishRating={(value) => {
-                rateSpot(value);
-              }}
-            /> */}
             <Rating
               type="custom"
               ratingColor={colors.title}
@@ -284,9 +289,7 @@ const SpotScreen = (props) => {
               ratingBackgroundColor="lightgrey"
               ratingCount={5}
               imageSize={25}
-              onFinishRating={(value) => {
-                rateSpot(value);
-              }}
+              readonly={true}
               style={styles.rating}
             />
             <Text
@@ -320,15 +323,19 @@ const SpotScreen = (props) => {
       <Tab.Screen name="Challenges">
         {() => (
           <View>
-            <BasicButton
-              title="Add new challenge"
-              onPress={() => {
-                props.navigation.navigate("AddChallenge", { spot: spot });
-              }}
-            />
+            <Text
+              style={[
+                styles.titleStyle,
+                { color: colors.text, marginVertical: 15 },
+              ]}
+            >
+              {" "}
+              Public challenges{" "}
+            </Text>
+
             {challenges.length !== 0 && (
               <FlatList
-                //style={{ }}
+                style={{ height: "70%" }}
                 numColumns={3}
                 data={challenges}
                 keyExtractor={(item) => item.key}
@@ -346,6 +353,70 @@ const SpotScreen = (props) => {
                 )}
               />
             )}
+            <BasicButton
+              title="Add new challenge"
+              onPress={() => {
+                props.navigation.navigate("AddChallenge", { spot: spot });
+              }}
+            />
+          </View>
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Comments">
+        {() => (
+          <View>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <AddCommentModalView
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                  onPressRating={(num) => setStarNum(num)}
+                  comment={comment}
+                  setComment={(cmnt) => setComment(cmnt)}
+                  isAnonym={isAnonym}
+                  setIsAnonym={() => setIsAnonym(!isAnonym)}
+                  onPressButton={() => {
+                    rateSpot();
+                    console.log(rating);
+                  }}
+                />
+              </View>
+            </Modal>
+
+            <Text
+              style={[
+                styles.titleStyle,
+                { color: colors.text, marginVertical: 15 },
+              ]}
+            >
+              {" "}
+              Comments{" "}
+            </Text>
+            {rating.length !== 0 && (
+              <FlatList
+                style={{ height: "70%" }}
+                data={rating}
+                keyExtractor={(item) => item.key}
+                renderItem={({ item }) => (
+                  <CommentView spot={spot} comment={item} />
+                )}
+              />
+            )}
+            <BasicButton
+              title="Add comment"
+              style={{}}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            />
           </View>
         )}
       </Tab.Screen>
@@ -388,4 +459,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   rating: { marginBottom: 10 },
+  centeredView: {
+    justifyContent: "center",
+    width: "100%",
+    position: "absolute",
+    bottom: 20,
+    marginTop: 22,
+  },
 });
