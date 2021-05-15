@@ -21,7 +21,11 @@ export default function SpotListScreen(props) {
   const dispatch = useDispatch();
   // const saveSpots = (spots) => dispatch(setSpots(spots));
 
-  const spots = useSelector((state) => state.spotsReducer.spots);
+  const spots = useSelector((state) => state.spotsReducer.spots).filter(
+    (spot) => {
+      return spot.public === true;
+    }
+  );
   const username = useSelector((state) => state.userReducer.user.username);
 
   useEffect(() => {

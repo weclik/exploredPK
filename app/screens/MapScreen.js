@@ -13,7 +13,11 @@ export default function MapScreen(props) {
   const { colors } = useTheme();
   const theme = useTheme();
 
-  const spots = useSelector((state) => state.spotsReducer.spots);
+  const spots = useSelector((state) => state.spotsReducer.spots).filter(
+    (spot) => {
+      return spot.public === true;
+    }
+  );
   const [location, setLocation] = useState(null);
   const [locRegion, setLocRegion] = useState(null);
   const [permission, setPermission] = useState(false);

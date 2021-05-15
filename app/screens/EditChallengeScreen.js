@@ -49,7 +49,7 @@ const EditChallengeScreen = (props) => {
   const username = useSelector((state) => state.userReducer.user.username);
 
   async function editChallenge() {
-    if (name === "" || description === "" || image === null) {
+    if (name === "" || description === "") {
       alert("Please fill all of the fields correctly.");
     } else {
       try {

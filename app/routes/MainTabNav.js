@@ -38,7 +38,6 @@ export default function MainTabNav() {
     let spotSubscribe = firebase
       .firestore()
       .collection("spots")
-      .where("public", "==", true)
       .onSnapshot(
         (querySnapshot) => {
           const spts = [];

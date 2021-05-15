@@ -18,10 +18,13 @@ import IconButton from "../components/IconButton";
 
 const ChallengeScreen = (props) => {
   const { challenge } = props.route.params;
-  const { spot } = props.route.params;
+  //const { spot } = props.route.params;
   const { colors } = useTheme();
 
   const chlngs = useSelector((state) => state.userReducer.userChallengesDone);
+  const spot = useSelector((state) => state.spotsReducer.spots).find((spot) => {
+    return spot.key === challenge.onSpot;
+  });
   const [isDone, setIsDone] = useState(false);
 
   useEffect(() => {
