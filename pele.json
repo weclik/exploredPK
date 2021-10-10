@@ -1,0 +1,53 @@
+[
+  {
+    "spots": [
+      {
+        "key": "spot1ID",
+        "createdBy": "user1ID",
+        "title": "Spot",
+        "description": "Spot description",
+        "imageURL": "https://firebasestorage...",
+        "latlng": [48.21, 21.48],
+        "public": true,
+        "rating": [
+          {
+            "key": "user2ID",
+            "anonymous": false,
+            "comment": "nice spot",
+            "user": "user2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "challenges": [
+      {
+        "key": "challenge1ID",
+        "createdBy": "user1ID",
+        "name": "Spot",
+        "description": "Spot description",
+        "onSpot": "spot1ID",
+        "photoURL": "https://firebasestorage...",
+        "public": true
+      }
+    ]
+  },
+  {
+    "users": [
+      {
+        "key": "user1ID",
+        "username": "user1",
+        "email": "user1@mail.com",
+        "challengesDone": [
+          {
+            "challengeID": "challenge1ID"
+          },
+          {
+            "challengeID": "challenge2ID"
+          }
+        ]
+      }
+    ]
+  }
+]

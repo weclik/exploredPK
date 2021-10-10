@@ -74,18 +74,11 @@ export default function App() {
   }
 
   if (!loggedIn) {
-    return (
-      //<Provider store={store()}>
-      // <AppearanceProvider>
-      <LoginStackNav theme={colorScheme} />
-      // </AppearanceProvider>
-      //</Provider>
-    );
+    return <LoginStackNav theme={colorScheme} />;
   }
 
   return (
     <Provider store={store()}>
-      {/* <AppearanceProvider> */}
       <NavigationContainer
         theme={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
       >
@@ -132,7 +125,6 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-      {/* </AppearanceProvider> */}
     </Provider>
   );
 }

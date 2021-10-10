@@ -385,6 +385,7 @@ const SpotScreen = (props) => {
                   setIsAnonym={() => setIsAnonym(!isAnonym)}
                   onPressButton={() => {
                     rateSpot();
+                    setModalVisible(!modalVisible);
                     console.log(rating);
                   }}
                 />
