@@ -52,6 +52,7 @@ const SpotScreen = (props) => {
   const challenges = useSelector((state) => state.spotsReducer.challenges);
   const username = useSelector((state) => state.userReducer.user.username);
 
+  //Linking to google maps to show directions to the spot
   async function getRoute() {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {

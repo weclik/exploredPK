@@ -24,6 +24,7 @@ import * as firebase from "firebase";
 import { store } from "./app/redux/store";
 import { Provider } from "react-redux";
 
+//Database configuration in firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDZtOtAaY01S41L2uyVowApNZkAALonsGk",
   authDomain: "exploredapp.firebaseapp.com",
@@ -33,6 +34,7 @@ const firebaseConfig = {
   appId: "1:611646677595:web:61e525abe482c4194ad57e",
 };
 
+//initialization
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -48,6 +50,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  //on App start
   useEffect(() => {
     let onAuthStateSub = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
