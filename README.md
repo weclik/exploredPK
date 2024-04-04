@@ -30,12 +30,16 @@ Usage
 
 1. Sign up or sign in to the app
 2. Browse list of available training spots
+   
    <img src="https://github.com/weclik/exploredPK/assets/58919025/8e404be0-5b90-4493-b7c6-b53d3aa88a67" width="200" height="400" />
 4. Check the map to see where are the spots located around you or create new spots that are not listed already
+   
    <img src="https://github.com/weclik/exploredPK/assets/58919025/4cbbd7ed-96d1-4ff3-93f6-db9d01a220af" width="200" height="400" />
 6. Check or add new challenges to each spot
+   
    <img src="https://github.com/weclik/exploredPK/assets/58919025/b67599a7-18f6-4c9f-b3b2-c0fa6cc4ad90" width="200" height="400" />
 8. Comment or rate the spot
+   
    <img src="https://github.com/weclik/exploredPK/assets/58919025/00d2d91f-b7fe-4307-a695-0f8030a3e28b" width="200" height="400" />
 
 
